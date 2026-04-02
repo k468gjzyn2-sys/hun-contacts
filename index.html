@@ -3,140 +3,58 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>선생님 손가락 보호 구역 — 갈무리 아카데미</title>
+<title>선생님 손가락 보호 구역 — Only Galmuri</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet"/>
 <style>
+/* 디자인 시스템 */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --bg: #F5F5F7; --surface: #FFFFFF; --surface2: #F5F5F7; --border: #E0E0E5;
   --tx: #1D1D1F; --tx2: #6E6E73; --tx3: #AEAEB2;
-  --accent: #FF9E00; --accent-bg: #FFF7E6; --accent-dark: #E08800;
-  --green: #34C759; --green-bg: #EDFAF2;
+  --accent: #FF9E00; --accent-bg: #FFF7E6; --accent-dk: #E08800;
   --radius: 18px; --radius-sm: 12px;
   --shadow: 0 2px 12px rgba(0,0,0,.07), 0 0 0 0.5px rgba(0,0,0,.06);
 }
+body { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--tx); -webkit-font-smoothing: antialiased; }
 
-html, body { height: 100%; background: var(--bg); }
-body {
-  min-height: 100vh; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 40px 20px; font-family: 'Noto Sans KR', sans-serif;
-  color: var(--tx); -webkit-font-smoothing: antialiased;
-}
-
-/* ── Header ── */
+/* 헤더 */
 .header { text-align: center; margin-bottom: 40px; }
-.badge {
-  display: inline-block; padding: 5px 14px; background: var(--tx); color: #fff;
-  font-size: 10px; font-weight: 700; border-radius: 100px;
-  margin-bottom: 16px; letter-spacing: 0.1em;
-}
+.badge { display: inline-block; padding: 5px 14px; background: var(--tx); color: #fff; font-size: 10px; font-weight: 700; border-radius: 100px; margin-bottom: 16px; letter-spacing: 0.1em; }
 .title { font-size: 36px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 8px; line-height: 1.15; }
 .title span { color: var(--accent); }
-.desc {
-  font-size: 15px; font-weight: 300; color: var(--tx2);
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.sample-link {
-  font-size: 12px; color: var(--accent); text-decoration: none;
-  cursor: pointer; display: inline-flex; align-items: center; gap: 3px; transition: opacity .2s;
-}
-.sample-link:hover { opacity: 0.7; }
+.desc { font-size: 15px; font-weight: 300; color: var(--tx2); display: flex; align-items: center; justify-content: center; gap: 8px; }
+.sample-link { font-size: 12px; color: var(--accent); text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; transition: opacity .2s; font-weight: 500; }
 
-/* ── Card / Drop zone ── */
+/* 카드 및 드롭존 */
 .wrap { width: 100%; max-width: 500px; }
 .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-
-.dz {
-  position: relative; padding: 60px 30px; text-align: center;
-  cursor: pointer; transition: background .25s ease; user-select: none;
-}
+.dz { position: relative; padding: 60px 30px; text-align: center; cursor: pointer; transition: background .25s ease; user-select: none; }
 .dz:hover { background: #FAFAFA; }
-.dz.drag  { background: var(--accent-bg); cursor: copy; }
-.dz.proc  { cursor: default; pointer-events: none; }
-
-.dz-border {
-  position: absolute; inset: 12px;
-  border: 1.5px dashed var(--border);
-  border-radius: calc(var(--radius) - 6px);
-  pointer-events: none; transition: border-color .25s, opacity .25s; opacity: 0;
-}
+.dz.drag { background: var(--accent-bg); }
+.dz-border { position: absolute; inset: 12px; border: 1.5px dashed var(--border); border-radius: calc(var(--radius) - 6px); pointer-events: none; opacity: 0; transition: opacity .25s; }
 .dz:hover .dz-border { opacity: 1; }
-.dz.drag  .dz-border { opacity: 1; border-color: var(--accent); }
+.dz.drag .dz-border { opacity: 1; border-color: var(--accent); }
 
-/* ── Progress ── */
-.prog-container { width: 100%; max-width: 260px; margin: 0 auto; }
-.prog-track {
-  width: 100%; height: 4px; background: var(--border);
-  border-radius: 100px; overflow: hidden; margin-top: 15px;
-}
-.prog-fill { height: 100%; background: var(--accent); width: 0%; transition: width .15s ease; }
-.prog-count { font-size: 12px; color: var(--tx3); margin-top: 8px; font-weight: 300; }
-
-/* ── Stats ── */
+/* 결과창 및 미리보기 */
 .stats { display: flex; gap: 8px; margin: 20px 0; }
 .stat { background: var(--surface2); padding: 12px; border-radius: var(--radius-sm); flex: 1; text-align: center; }
-.stat-n { font-size: 22px; font-weight: 700; color: var(--tx); letter-spacing: -0.03em; }
+.stat-n { font-size: 22px; font-weight: 700; color: var(--tx); }
 .stat-l { font-size: 10px; color: var(--tx3); margin-top: 2px; }
-
-/* ── Preview ── */
-.preview-area { margin-top: 24px; text-align: left; }
-.preview-label {
-  font-size: 11px; font-weight: 700; color: var(--tx3);
-  margin-bottom: 8px; text-transform: uppercase; letter-spacing: .05em;
-}
-.preview-list {
-  background: var(--surface2); border-radius: var(--radius-sm);
-  max-height: 160px; overflow-y: auto;
-  border: 1px solid rgba(0,0,0,.03);
-}
-.preview-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 14px; border-bottom: 1px solid rgba(0,0,0,.05); font-size: 13px;
-}
-.preview-item:last-child { border-bottom: none; }
-.p-name { color: var(--tx); }
-.p-tel  { font-size: 11px; color: var(--tx3); margin-left: 6px; }
-.p-role {
-  font-size: 10px; padding: 2px 8px; border-radius: 4px;
-  background: #fff; color: var(--tx2); border: 1px solid var(--border);
-  white-space: nowrap; flex-shrink: 0;
-}
+.preview-list { background: var(--surface2); border-radius: var(--radius-sm); max-height: 180px; overflow-y: auto; border: 1px solid rgba(0,0,0,0.03); margin-top: 10px; }
+.preview-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
+.preview-item.warn-row { background: #FFFBF2; }
+.p-role { font-size: 10px; padding: 2px 8px; border-radius: 4px; background: #fff; color: var(--tx2); border: 1px solid var(--border); }
 .p-role.student { color: var(--accent); border-color: var(--accent); background: var(--accent-bg); }
-.p-role.parent-f { color: #0071E3; border-color: #0071E3; background: #EAF3FF; }
-.p-role.parent-m { color: #8B5CF6; border-color: #C4B5FD; background: #F5F3FF; }
+.p-role.warning { color: #fff; border-color: var(--accent); background: var(--accent); font-weight: 600; }
 
-/* ── Preview limit notice ── */
-.preview-notice {
-  margin-top: 8px;
-  padding: 10px 14px;
-  background: var(--accent-bg);
-  border-radius: var(--radius-sm);
-  display: flex; align-items: flex-start; gap: 8px;
-  text-align: left;
-}
-.preview-notice-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
-.preview-notice-text { font-size: 11px; color: var(--tx2); line-height: 1.6; }
-.preview-notice-text strong { color: var(--tx); font-weight: 600; }
+/* 진행바 */
+.prog-track { width: 100%; height: 4px; background: var(--border); border-radius: 100px; overflow: hidden; margin-top: 15px; }
+.prog-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.2s; }
 
-/* ── Button ── */
-.btn {
-  display: inline-flex; align-items: center;
-  padding: 12px 28px; background: var(--accent); color: #fff;
-  border-radius: 100px; cursor: pointer; font-size: 14px; font-weight: 600;
-  border: none; transition: transform .2s, box-shadow .2s, background .2s;
-  font-family: 'Noto Sans KR', sans-serif; -webkit-font-smoothing: antialiased;
-}
-.btn:hover  { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,158,0,.3); }
-.btn:active { transform: translateY(0); }
-.btn-ghost  {
-  background: transparent; color: var(--tx2);
-  border: 1px solid var(--border); margin-top: 12px;
-}
-.btn-ghost:hover { background: var(--surface2); box-shadow: none; transform: none; }
-
+.btn { display: inline-flex; align-items: center; padding: 12px 28px; background: var(--accent); color: #fff; border-radius: 100px; border: none; cursor: pointer; font-weight: 600; margin-top: 12px; }
+.btn-ghost { background: transparent; color: var(--tx2); border: 1px solid var(--border); }
 #fileInput { display: none; }
 .foot { margin-top: 40px; font-size: 10px; color: var(--tx3); letter-spacing: 0.05em; }
 </style>
@@ -146,63 +64,38 @@ body {
 <div class="header">
   <div class="badge">Only Galmuri</div>
   <h1 class="title">선생님 손가락 <span>보호 구역</span></h1>
-  <p class="desc">
-    수십 명의 번호, 일일이 치지 말고 드래그 한 번으로 저장하세요.
-    <span style="color:var(--border)">|</span>
-    <a class="sample-link" onclick="downloadSample(event)">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-      </svg>
-      샘플 받기
-    </a>
-  </p>
+  <p class="desc">수십 명의 번호, 일일이 치지 말고 드래그 한 번으로 저장하세요 <span style="color:var(--border)">|</span> <a class="sample-link" onclick="downloadSample(event)">샘플 받기</a></p>
 </div>
 
 <div class="wrap">
   <div class="card">
     <div class="dz" id="dz">
       <div class="dz-border"></div>
-
-      <!-- IDLE -->
       <div id="view-idle">
-        <div style="font-size:17px;font-weight:600;margin-bottom:6px;letter-spacing:-0.02em;">여기에 엑셀 파일을 놓아주세요</div>
-        <div style="font-size:13px;color:var(--tx3);font-weight:300;">모든 시트를 자동으로 통합하여 변환합니다.</div>
+        <div style="font-size:17px; font-weight:600; margin-bottom:6px;">여기에 엑셀 파일을 놓아주세요</div>
+        <div style="font-size:13px; color:var(--tx3);">모든 시트를 자동으로 통합하여 변환합니다.</div>
       </div>
-
-      <!-- PROCESSING -->
       <div id="view-proc" style="display:none;">
-        <div class="prog-container">
-          <div style="font-size:14px;font-weight:500;letter-spacing:-0.01em;">연락처 분석 중…</div>
-          <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
-          <div class="prog-count" id="prog-count">준비 중</div>
-        </div>
+        <div style="font-size:14px; font-weight:500;">연락처 분석 중…</div>
+        <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+        <div id="prog-count" style="font-size:12px; color:var(--tx3); margin-top:8px;">0 / 0 행</div>
       </div>
-
-      <!-- DONE -->
       <div id="view-done" style="display:none;">
-        <div style="font-size:18px;font-weight:700;margin-bottom:4px;letter-spacing:-0.02em;">변환 완료 🎉</div>
-        <div id="done-filename" style="font-size:12px;color:var(--tx3);margin-bottom:16px;"></div>
-
+        <div style="font-size:18px; font-weight:700; margin-bottom:4px;">변환 완료 🎉</div>
+        <div id="done-filename" style="font-size:12px; color:var(--tx3); margin-bottom:16px;"></div>
         <div class="stats">
           <div class="stat"><div class="stat-n" id="stat-total">0</div><div class="stat-l">전체 건수</div></div>
           <div class="stat"><div class="stat-n" id="stat-student">0</div><div class="stat-l">학생</div></div>
           <div class="stat"><div class="stat-n" id="stat-parent">0</div><div class="stat-l">학부모</div></div>
         </div>
-
-        <div class="preview-area">
-          <div class="preview-label">Data Preview</div>
+        <div class="preview-area" style="text-align:left;">
+          <div id="warn-label" style="font-size:11px; font-weight:700; color:var(--accent); margin-bottom:8px; display:none;">⚠️ 별도 저장 필요 확인</div>
           <div class="preview-list" id="preview-list"></div>
-          <div class="preview-notice">
-            <span class="preview-notice-icon">💡</span>
-            <span class="preview-notice-text">
-              미리보기는 <strong>최대 100개</strong>만 표시됩니다.<br>
-              <strong>가져오기 클릭 시 전체 인원이 정상 저장됩니다.</strong>
-            </span>
+          <div style="margin-top:10px; padding:10px; background:var(--accent-bg); border-radius:8px; font-size:11px; color:var(--tx2); line-height:1.5;">
+            💡 미리보기는 최대 100개만 표시됩니다. <strong>가져오기 클릭 시 전체 인원이 정상 저장됩니다.</strong>
           </div>
         </div>
-
-        <button class="btn btn-ghost" onclick="toIdle()">새 파일 변환</button>
+        <button class="btn btn-ghost" onclick="location.reload()">새 파일 변환</button>
       </div>
     </div>
   </div>
@@ -212,196 +105,116 @@ body {
 <div class="foot">DESIGNED BY HUN · 2026</div>
 
 <script>
-const COL = { name:'성명', student:'학생핸드폰', dad:'부핸드폰', mom:'모핸드폰' }
-const PREVIEW_LIMIT = 100
+// 컬럼 감지 후보
+const CANDIDATES = {
+  name: ['학생명', '성명', '이름', '학생이름'],
+  student: ['학생핸드폰', '학생번호', '학생연락처', '핸드폰', '연락처'],
+  parent: ['학부모핸드폰', '학부모번호', '부모핸드폰', '부모번호', '보호자번호']
+};
 
-const dz        = document.getElementById('dz')
-const fileInput = document.getElementById('fileInput')
-let   state     = 'idle'
+const dz = document.getElementById('dz');
+const fileInput = document.getElementById('fileInput');
 
-function show(id) {
-  ['view-idle','view-proc','view-done'].forEach(v =>
-    document.getElementById(v).style.display = (v === id ? '' : 'none')
-  )
-  state = id
-  dz.classList.toggle('proc', id === 'view-proc')
-}
+dz.onclick = () => fileInput.click();
+dz.ondragover = e => { e.preventDefault(); dz.classList.add('drag'); };
+dz.ondragleave = () => dz.classList.remove('drag');
+dz.ondrop = e => { e.preventDefault(); dz.classList.remove('drag'); handleFile(e.dataTransfer.files[0]); };
+fileInput.onchange = e => { if(e.target.files[0]) handleFile(e.target.files[0]); fileInput.value = ''; };
 
-function toIdle() { show('view-idle'); dz.classList.remove('drag') }
-
-// ── 이벤트 ──────────────────────────────────────────────────────────────
-dz.addEventListener('dragover',  e => { e.preventDefault(); if (state !== 'view-proc') dz.classList.add('drag') })
-dz.addEventListener('dragleave', e => { if (!dz.contains(e.relatedTarget)) dz.classList.remove('drag') })
-dz.addEventListener('drop', e => {
-  e.preventDefault(); dz.classList.remove('drag')
-  if (state === 'view-proc') return
-  const f = e.dataTransfer.files[0]; if (f) handleFile(f)
-})
-dz.addEventListener('click', () => { if (state !== 'view-proc') fileInput.click() })
-fileInput.addEventListener('change', e => { const f = e.target.files[0]; if (f) handleFile(f); fileInput.value = '' })
-
-// ── 샘플 파일 (새 컬럼명 반영) ──────────────────────────────────────────
 function downloadSample(e) {
-  e.stopPropagation()
-  const ws = XLSX.utils.aoa_to_sheet([
-    ['성명', '학생핸드폰', '부핸드폰', '모핸드폰'],
-    ['홍길동', '010-1234-5678', '010-1111-2222', '010-3333-4444'],
-    ['김철수', '010-2222-3333', '010-5555-6666', ''],
-    ['이영희', '',              '',              '010-7777-8888'],
-  ])
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, 'Sample')
-  XLSX.writeFile(wb, 'Galmuri_Contact_Sample.xlsx')
+  e.stopPropagation();
+  const ws = XLSX.utils.aoa_to_sheet([['학생명', '학생핸드폰', '학부모핸드폰'], ['홍길동', '010-1234-5678', '010-1111-2222'], ['성춘향', '010-2222-3333', '010-4444-5555 / 010-6666-7777']]);
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Sample');
+  XLSX.writeFile(wb, 'Galmuri_Contact_Sample.xlsx');
 }
 
-// ── 정규화 & vCard 빌드 ──────────────────────────────────────────────────
-function normTel(v) { return String(v ?? '').replace(/[^0-9]/g, '') }
+function normTel(v) { return String(v ?? '').replace(/[^0-9]/g, ''); }
 
-function buildCard(displayName, tel) {
-  const parts = displayName.split(' ')
-  const last  = parts[0] || ''
-  const first = parts.slice(1).join(' ')
-  return [
-    'BEGIN:VCARD',
-    'VERSION:3.0',
-    'FN;CHARSET=UTF-8:'  + displayName,
-    'N;CHARSET=UTF-8:'   + last + ';' + first + ';;;',
-    'TEL;TYPE=CELL:'     + tel,
-    'END:VCARD',
-  ].join('\r\n')
-}
-
-// ── 미리보기 (최대 PREVIEW_LIMIT개) ─────────────────────────────────────
-let previewCount = 0
-function addPreview(name, tel, role, roleClass) {
-  if (previewCount >= PREVIEW_LIMIT) return
-  previewCount++
-  const div = document.createElement('div')
-  div.className = 'preview-item'
-  div.innerHTML =
-    `<span><span class="p-name">${name}</span><span class="p-tel">${tel}</span></span>` +
-    `<span class="p-role ${roleClass}">${role}</span>`
-  document.getElementById('preview-list').appendChild(div)
-}
-
-// ── 파일 처리: 모든 시트 통합 ───────────────────────────────────────────
 function handleFile(file) {
-  if (!file) return
-  document.getElementById('preview-list').innerHTML = ''
-  previewCount = 0
-  show('view-proc')
-
-  const reader = new FileReader()
+  if (!file) return;
+  document.getElementById('view-idle').style.display = 'none';
+  document.getElementById('view-proc').style.display = 'block';
+  const reader = new FileReader();
   reader.onload = e => {
-    try {
-      const wb = XLSX.read(new Uint8Array(e.target.result), { type:'array', codepage:65001 })
-
-      // 모든 시트 데이터를 하나로 합침
-      let allRows = []
-      let sharedHeaders = null
-      wb.SheetNames.forEach(sheetName => {
-        const raw = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header:1, defval:'' })
-        let hi = raw.findIndex(r => r.some(c => String(c).trim() === COL.name))
-        if (hi === -1) return // 이 시트에 헤더 없으면 스킵
-        const headers  = raw[hi].map(c => String(c).trim())
-        const dataRows = raw.slice(hi + 1)
-        if (!sharedHeaders) sharedHeaders = headers
-        // 헤더가 다른 시트도 공통 컬럼 기준으로 맞춰 병합
-        dataRows.forEach(rawRow => {
-          const row = {}
-          headers.forEach((h, i) => { row[h] = String(rawRow[i] ?? '').trim() })
-          allRows.push(row)
-        })
-      })
-
-      if (!sharedHeaders || !allRows.length) {
-        show('view-idle')
-        alert('변환된 연락처가 없어요.\n"성명" 컬럼이 포함된 시트가 있는지 확인해주세요.')
-        return
-      }
-
-      const base = file.name.replace(/\.[^.]+$/, '')
-      processData(allRows, base)
-    } catch(ex) {
-      show('view-idle')
-      alert('파일 파싱 오류: ' + ex.message)
-    }
-  }
-  reader.readAsArrayBuffer(file)
+    const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+    let allRows = [];
+    wb.SheetNames.forEach(name => {
+      const raw = XLSX.utils.sheet_to_json(wb.Sheets[name], {header:1, defval:''});
+      const hi = raw.findIndex(r => r.some(c => CANDIDATES.name.includes(String(c).trim())));
+      if (hi === -1) return;
+      const headers = raw[hi].map(c => String(c).trim());
+      raw.slice(hi + 1).forEach(r => {
+        const row = {}; headers.forEach((h, i) => row[h] = r[i]); allRows.push(row);
+      });
+    });
+    processData(allRows, file.name.split('.')[0]);
+  };
+  reader.readAsArrayBuffer(file);
 }
 
-// ── 청크 단위 처리 + 진행바 ─────────────────────────────────────────────
-function processData(allRows, base) {
-  const CHUNK = 30
-  let idx = 0, sc = 0, pc = 0
-  const cards = []
-  const total = allRows.length || 1
+function processData(rows, base) {
+  let sc = 0, pc = 0, wc = 0, cards = [];
+  const preview = document.getElementById('preview-list');
+  preview.innerHTML = '';
 
-  function setProgress(done) {
-    const pct = Math.round((done / total) * 100)
-    document.getElementById('prog-fill').style.width  = pct + '%'
-    document.getElementById('prog-count').textContent = done + ' / ' + total + ' 행'
-  }
+  rows.forEach((row, i) => {
+    setTimeout(() => {
+      const h_name = CANDIDATES.name.find(k => row[k]);
+      const h_student = CANDIDATES.student.find(k => row[k]);
+      const h_parent = CANDIDATES.parent.find(k => row[k]);
+      
+      const name = row[h_name];
+      if (!name) return;
 
-  function tick() {
-    const end = Math.min(idx + CHUNK, allRows.length)
-    while (idx < end) {
-      const row  = allRows[idx++]
-      const name = row[COL.name]
-      const sp   = normTel(row[COL.student])
-      const dp   = normTel(row[COL.dad])
-      const mp   = normTel(row[COL.mom])
-      if (!name) continue
+      const sTel = normTel(row[h_student]);
+      const pRaw = String(row[h_parent] ?? '').split(/[/,]/).map(v => normTel(v)).filter(v => v.length >= 9);
 
-      if (sp) {
-        cards.push(buildCard(name, sp))
-        addPreview(name, sp, '학생', 'student')
-        sc++
+      if (sTel) {
+        cards.push(`BEGIN:VCARD\r\nVERSION:3.0\r\nFN;CHARSET=UTF-8:${name}\r\nN;CHARSET=UTF-8:;${name};;;\r\nTEL;TYPE=CELL:${sTel}\r\nEND:VCARD`);
+        sc++;
+        if (sc + pc + wc <= 100) addPreview(name, sTel, '학생', 'student');
       }
-      if (dp) {
-        cards.push(buildCard(name + ' 부', dp))
-        addPreview(name + ' 부', dp, '부', 'parent-f')
-        pc++
-      }
-      if (mp) {
-        cards.push(buildCard(name + ' 모', mp))
-        addPreview(name + ' 모', mp, '모', 'parent-m')
-        pc++
-      }
-      setProgress(idx)
-    }
 
-    if (idx < allRows.length) {
-      setTimeout(tick, 0)
-    } else {
-      setProgress(total)
-      setTimeout(() => finish(cards, sc, pc, base), 100)
-    }
-  }
+      if (pRaw.length >= 2) {
+        wc++;
+        addPreview(name, pRaw.join(' / '), '별도 저장 필요', 'warning', true);
+      } else if (pRaw[0]) {
+        cards.push(`BEGIN:VCARD\r\nVERSION:3.0\r\nFN;CHARSET=UTF-8:${name} 부모님\r\nN;CHARSET=UTF-8:;${name} 부모님;;;\r\nTEL;TYPE=CELL:${pRaw[0]}\r\nEND:VCARD`);
+        pc++;
+        if (sc + pc + wc <= 100) addPreview(name + ' 부모님', pRaw[0], '학부모', 'parent');
+      }
 
-  setProgress(0)
-  setTimeout(tick, 0)
+      const pct = Math.round(((i + 1) / rows.length) * 100);
+      document.getElementById('prog-fill').style.width = pct + '%';
+      document.getElementById('prog-count').textContent = `${i + 1} / ${rows.length} 행`;
+      if (i === rows.length - 1) finish(cards, sc, pc, wc, base);
+    }, i * 2);
+  });
 }
 
-// ── 완료 ─────────────────────────────────────────────────────────────────
-function finish(cards, sc, pc, base) {
-  if (!cards.length) {
-    show('view-idle')
-    alert('변환된 연락처가 없어요.\n성명 · 학생핸드폰 · 부핸드폰 · 모핸드폰 컬럼을 확인해주세요.')
-    return
+function addPreview(name, tel, role, cls, warn = false) {
+  const div = document.createElement('div');
+  div.className = 'preview-item' + (warn ? ' warn-row' : '');
+  div.innerHTML = `<span>${warn ? '⚠️ ' : ''}${name} <small style="color:var(--tx3); margin-left:5px;">${tel}</small></span><span class="p-role ${cls}">${role}</span>`;
+  document.getElementById('preview-list').appendChild(div);
+}
+
+function finish(cards, sc, pc, wc, base) {
+  if (cards.length) {
+    const blob = new Blob(['\uFEFF' + cards.join('\r\n\r\n')], {type:'text/vcard;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `${base}_갈무리.vcf`; a.click();
   }
-
-  const blob = new Blob(['\uFEFF' + cards.join('\r\n\r\n')], { type:'text/vcard;charset=utf-8' })
-  const url  = URL.createObjectURL(blob)
-  const a    = document.createElement('a')
-  a.href = url; a.download = base + '_갈무리.vcf'; a.click()
-  URL.revokeObjectURL(url)
-
-  document.getElementById('stat-total').textContent    = sc + pc
-  document.getElementById('stat-student').textContent  = sc
-  document.getElementById('stat-parent').textContent   = pc
-  document.getElementById('done-filename').textContent = base + '_갈무리.vcf'
-  show('view-done')
+  document.getElementById('stat-total').textContent = sc + pc;
+  document.getElementById('stat-student').textContent = sc;
+  document.getElementById('stat-parent').textContent = pc;
+  if (wc > 0) {
+    const wl = document.getElementById('warn-label');
+    wl.textContent = `⚠️ 별도 저장 필요: ${wc}건`; wl.style.display = 'block';
+  }
+  document.getElementById('done-filename').textContent = `${base}_갈무리.vcf`;
+  document.getElementById('view-proc').style.display = 'none';
+  document.getElementById('view-done').style.display = 'block';
 }
 </script>
 </body>
